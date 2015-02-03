@@ -25,6 +25,8 @@
 var iotdb = require('iotdb')
 var _ = iotdb.helpers;
 
+var hc = require('./hue-colors');
+
 var unirest = require('unirest');
 
 var bunyan = require('bunyan');
@@ -35,6 +37,7 @@ var logger = bunyan.createLogger({
 
 var OFFSET_PUSH = 100000;
 var OFFSET_PULL = 200000;
+
 
 /**
  *  EXEMPLAR and INSTANCE
@@ -53,6 +56,7 @@ var HueBridge = function(paramd, native) {
 
     self.paramd = _.defaults(paramd, {
         number: 0,
+        poll: 30,
         account: null,
     });
     self.native = native;
@@ -205,6 +209,24 @@ HueBridge.prototype.push = function(pushd) {
         putd.on = pushd.on;
     }
 
+    if (_.isString(pushd.color)) {
+        var color = new iotdb.libs.Color(pushd.color);
+        if ((color.r === 0) && (color.g === 0) && (color.b === 0)) {
+            putd.on = false;
+        } else {
+            putd.xy = hc.rgbToCIE1931(color.r, color.g, color.b);
+            putd.bri = Math.max(color.r, color.g, color.b) * 255;
+            putd.on = true;
+        }
+
+
+    /*
+        self.pulled({
+            on: putd.on
+        });
+     */
+    }
+
     var qitem = {
         id: self.light + OFFSET_PUSH,
         run: function () {
@@ -224,7 +246,6 @@ HueBridge.prototype.push = function(pushd) {
                 .end(function (result) {
                     self.queue.finished(qitem);
                     if (!result.ok) {
-                        // console.log("# HueDriver.push", "not ok", "url", url, "result", result.text);
                         logger.error({
                             method: "push",
                             url: url,
@@ -233,7 +254,6 @@ HueBridge.prototype.push = function(pushd) {
                         return;
                     }
 
-                    // console.log("- HueDriver.push", result.body);
                     logger.info({
                         method: "push",
                         result: result.body,
