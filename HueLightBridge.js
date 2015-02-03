@@ -362,28 +362,13 @@ HueLightBridge.prototype.pull = function() {
 
 /**
  *  INSTANCE.
- *  Return the identify of this thing: basically
- *  a dictionary of what uniquely identifies this,
- *  based <code>self.native</code>.
- *  <p>
- *  There <b>must</b> be something in the dictionary!
- */
-HueLightBridge.prototype.identity = function() {
-    var self = this;
-
-    return {
-        bridge: "HueLightBridge",
-        uuid: self.native.uuid,
-    };
-};
-
-/**
- *  INSTANCE.
  *  Return the metadata - compact form can be used.
  *  Does not have to work when not reachable
  *  <p>
  *  Really really useful things are:
  *  <ul>
+ *  <li><code>iot:thing</code> required - a unique ID
+ *  <li><code>iot:device</code> suggested if linking multiple things together
  *  <li><code>iot:name</code>
  *  <li><code>iot:number</code>
  *  <li><code>schema:manufacturer</code>
