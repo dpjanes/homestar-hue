@@ -4,9 +4,9 @@
 
 var iotdb = require("iotdb");
 
-var HueBridge = require('../HueBridge').Bridge;
+var HueLightBridge = require('../HueLightBridge').Bridge;
 
-wrapper = iotdb.bridge_wrapper(new HueBridge({
+wrapper = iotdb.bridge_wrapper(new HueLightBridge({
     mdns: true
 }));
 wrapper.on('discovered', function(bridge) {

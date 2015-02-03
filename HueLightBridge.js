@@ -1,5 +1,5 @@
 /*
- *  HueBridge.js
+ *  HueLightBridge.js
  *
  *  David Janes
  *  IOTDB.org
@@ -32,7 +32,7 @@ var unirest = require('unirest');
 var bunyan = require('bunyan');
 var logger = bunyan.createLogger({
     name: 'iotdb',
-    module: 'HueBridge',
+    module: 'HueLightBridge',
 });
 
 var OFFSET_PUSH = 100000;
@@ -51,7 +51,7 @@ var OFFSET_PULL = 200000;
  *  <li><code>disconnnected</code> - this has been disconnected from a Thing
  *  </ul>
  */
-var HueBridge = function(paramd, native) {
+var HueLightBridge = function(paramd, native) {
     var self = this;
 
     self.paramd = _.defaults(paramd, {
@@ -60,11 +60,12 @@ var HueBridge = function(paramd, native) {
         account: null,
     });
     self.native = native;
+    self.stated = {};
 
     if (self.native) {
-        self.queue = new iotdb.Queue("HueBridge");
+        self.queue = new iotdb.Queue("HueLightBridge");
         self.url = "http://" + self.native.host + ":" + self.native.port +
-                    "/api/" + self.paramd.account + "/lights/" + self.paramd.number + "/state/";
+                    "/api/" + self.paramd.account + "/lights/" + self.paramd.number;
     }
 };
 
@@ -76,10 +77,10 @@ var HueBridge = function(paramd, native) {
  *  <ul>
  *  <li>look for Things (using <code>self.bridge</code> data to initialize)
  *  <li>find / create a <code>native</code> that does the talking
- *  <li>create an HueBridge(native)
+ *  <li>create an HueLightBridge(native)
  *  <li>call <code>self.discovered(bridge)</code> with it
  */
-HueBridge.prototype.discover = function() {
+HueLightBridge.prototype.discover = function() {
     var self = this;
     
     var cp = iotdb.upnp.control_point();
@@ -99,7 +100,7 @@ HueBridge.prototype.discover = function() {
     cp.search();
 };
 
-HueBridge.prototype._discover_native = function(native) {
+HueLightBridge.prototype._discover_native = function(native) {
     var self = this;
 
     logger.info({
@@ -108,7 +109,7 @@ HueBridge.prototype._discover_native = function(native) {
     }, "found Hue");
 
     // has this hub been set up?
-    var account_key = "bridges/HueBridge/" + native.uuid + "/account";
+    var account_key = "bridges/HueLightBridge/" + native.uuid + "/account";
     var account = iotdb.iot().cfg_get(account_key);
     if (!account) {
         logger.error({
@@ -118,7 +119,7 @@ HueBridge.prototype._discover_native = function(native) {
         return;
     }
 
-    // self.discovered(new HueBridge(self.paramd, native));
+    // self.discovered(new HueLightBridge(self.paramd, native));
     var url = "http://" + native.host + ":" + native.port + "/api/" + account + "/lights";
     unirest
         .get(url)
@@ -149,7 +150,7 @@ HueBridge.prototype._discover_native = function(native) {
                     account: account,
                 }, self.paramd);
 
-                self.discovered(new HueBridge(paramd, native));
+                self.discovered(new HueLightBridge(paramd, native));
             }
         });
 }
@@ -158,14 +159,33 @@ HueBridge.prototype._discover_native = function(native) {
  *  INSTANCE
  *  This is called when the Bridge is no longer needed. When
  */
-HueBridge.prototype.connect = function() {
+HueLightBridge.prototype.connect = function() {
     var self = this;
     if (!self.native) {
         return;
     }
+
+    self._setup_polling();
+    self.pull();
 };
 
-HueBridge.prototype._forget = function() {
+HueLightBridge.prototype._setup_polling = function() {
+    var self = this;
+    if (!self.paramd.poll) {
+        return;
+    }
+
+    var timer = setInterval(function() {
+        if (!self.native) {
+            clearInterval(timer);
+            return;
+        }
+
+        self.pull();
+    }, self.paramd.poll * 1000);
+};
+
+HueLightBridge.prototype._forget = function() {
     var self = this;
     if (!self.native) {
         return;
@@ -181,14 +201,15 @@ HueBridge.prototype._forget = function() {
 
 /**
  *  INSTANCE and EXEMPLAR (during shutdown). 
- *  This is called when the Bridge is no longer needed. When
+ *  This is called when the Bridge is no longer needed. 
  */
-HueBridge.prototype.disconnect = function() {
+HueLightBridge.prototype.disconnect = function() {
     var self = this;
     if (!self.native || !self.native) {
         return;
     }
 
+    self._forget();
 };
 
 /* --- data --- */
@@ -197,7 +218,7 @@ HueBridge.prototype.disconnect = function() {
  *  INSTANCE.
  *  Send data to whatever you're taking to.
  */
-HueBridge.prototype.push = function(pushd) {
+HueLightBridge.prototype.push = function(pushd) {
     var self = this;
     if (!self.native) {
         return;
@@ -219,16 +240,13 @@ HueBridge.prototype.push = function(pushd) {
             putd.on = true;
         }
 
-
-    /*
         self.pulled({
             on: putd.on
         });
-     */
     }
 
     var qitem = {
-        id: self.light + OFFSET_PUSH,
+        id: self.paramd.number + OFFSET_PUSH,
         run: function () {
             var url = self.url + "/state";
             logger.info({
@@ -270,11 +288,74 @@ HueBridge.prototype.push = function(pushd) {
  *  Pull data from whatever we're talking to. You don't
  *  have to implement this if it doesn't make sense
  */
-HueBridge.prototype.pull = function() {
+HueLightBridge.prototype.pull = function() {
     var self = this;
     if (!self.native) {
         return;
     }
+
+    logger.info({
+        method: "pull",
+        unique_id: self.unique_id
+    }, "called");
+
+    var qitem = {
+        id: self.paramd.number + OFFSET_PULL,
+        run: function () {
+            var url = self.url;
+            logger.info({
+                method: "pull",
+                url: url
+            }, "do");
+            unirest
+                .get(url)
+                .headers({
+                    'Accept': 'application/json'
+                })
+                .end(function (result) {
+                    self.queue.finished(qitem);
+                    if (!result.ok) {
+                        logger.error({
+                            method: "pull",
+                            url: url,
+                            result: result
+                        }, "not ok");
+                        return;
+                    }
+
+                    if (result.body && result.body.state) {
+                        var changed = false;
+                        var state = result.body.state;
+                        if (state.on !== undefined) {
+                            var value_on = state.on ? true : false;
+                            if (value_on !== self.stated['on-value']) {
+                                self.stated['on-value'] = value_on;
+                                changed = true;
+                            }
+                        }
+                        if ((state.xy !== undefined) && (state.bri !== undefined)) {
+                            value_hex = _h2c(state);
+                            if (value_hex !== self.stated['color-value']) {
+                                self.stated['color-value'] = value_hex;
+                                changed = true;
+                            }
+                        }
+
+                        if (changed) {
+                            self.pulled(self.stated);
+
+                            logger.info({
+                                method: "pull",
+                                light: self.paramd.number,
+                                pulld: self.stated,
+                            }, "pulled");
+                        }
+                    }
+                });
+        }
+    };
+    self.queue.add(qitem);
+    return self;
 };
 
 /* --- state --- */
@@ -287,11 +368,11 @@ HueBridge.prototype.pull = function() {
  *  <p>
  *  There <b>must</b> be something in the dictionary!
  */
-HueBridge.prototype.identity = function() {
+HueLightBridge.prototype.identity = function() {
     var self = this;
 
     return {
-        bridge: "HueBridge",
+        bridge: "HueLightBridge",
         uuid: self.native.uuid,
     };
 };
@@ -308,16 +389,17 @@ HueBridge.prototype.identity = function() {
  *  <li><code>schema:manufacturer</code>
  *  <li><code>schema:model</code>
  */
-HueBridge.prototype.meta = function() {
+HueLightBridge.prototype.meta = function() {
     var self = this;
     if (!self.native) {
         return;
     }
 
     return {
+        "iot:thing": _.id.thing_urn.unique("HueLight", self.native.uuid) + "/" + self.paramd.number,
+        "iot:device": _.id.thing_urn.unique("HueLight", self.native.uuid),
         "iot:name": self.paramd.name || "Hue",
         "iot:number": self.paramd.number,
-        "iot:dsid": "urn:iotdb:bridge:HueBridge:" + self.native.uuid,
         "schema:manufacturer": "http://philips.com/",
         "schema:model": "http://meethue.com/",
     };
@@ -329,7 +411,7 @@ HueBridge.prototype.meta = function() {
  *  do not need to worry about connect / disconnect /
  *  shutdown states, they will be always checked first.
  */
-HueBridge.prototype.reachable = function() {
+HueLightBridge.prototype.reachable = function() {
     return this.native !== null;
 };
 
@@ -339,20 +421,64 @@ HueBridge.prototype.reachable = function() {
  *  that are not configured are always not reachable.
  *  If not defined, "true" is returned
  */
-HueBridge.prototype.configured = function() {
+HueLightBridge.prototype.configured = function() {
     return true;
 };
 
 /* --- injected: THIS CODE WILL BE REMOVED AT RUNTIME, DO NOT MODIFY  --- */
-HueBridge.prototype.discovered = function(bridge) {
-    throw new Error("HueBridge.discovered not implemented");
+HueLightBridge.prototype.discovered = function(bridge) {
+    throw new Error("HueLightBridge.discovered not implemented");
 };
 
-HueBridge.prototype.pulled = function(pulld) {
-    throw new Error("HueBridge.pulled not implemented");
+HueLightBridge.prototype.pulled = function(pulld) {
+    throw new Error("HueLightBridge.pulled not implemented");
 };
+
+// hack! horrible horrible hack!
+var _hueds = null;
+function _h2c(state) {
+    var hued;
+
+    state.bri1 = state.bri / 255.0;
+
+    if (_hueds === null) {
+        _hueds = [];
+        for (var name in _.colord) {
+            var hex = _.colord[name];
+            var color = new iotdb.libs.Color(hex);
+
+            hued = {
+                xy: hc.rgbToCIE1931(color.r, color.g, color.b),
+                bri1: Math.max(color.r, color.g, color.b),
+                hex: color.get_hex(),
+            };
+
+            _hueds.push(hued);
+        }
+    }
+
+    var best = null;
+    var distance = 0;
+    for (var hi in _hueds) {
+        hued = _hueds[hi];
+        var xd = state.xy[0] - hued.xy[0];
+        var yd = state.xy[1] - hued.xy[1];
+        var bd = state.bri1 - hued.bri1;
+        var d = Math.sqrt(xd * xd + yd * yd + bd * bd);
+
+        if ((best === null) || (d < distance)) {
+            best = hued;
+            distance = d;
+        }
+    }
+
+    if (best) {
+        return best.hex;
+    }
+}
 
 /*
  *  API
  */
-exports.Bridge = HueBridge;
+exports.Bridge = HueLightBridge;
+

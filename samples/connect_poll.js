@@ -3,9 +3,9 @@
  */
 
 var iotdb = require('iotdb');
-var HueBridge = require('../HueBridge').Bridge;
+var HueLightBridge = require('../HueLightBridge').Bridge;
 
-var bridge_exemplar = new HueBridge();
+var bridge_exemplar = new HueLightBridge();
 bridge_exemplar.discovered = function(bridge) {
     console.log("+ got one\n ", bridge.meta());
     bridge.pulled = function(state) {
