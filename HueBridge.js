@@ -33,6 +33,9 @@ var logger = bunyan.createLogger({
     module: 'HueBridge',
 });
 
+var OFFSET_PUSH = 100000;
+var OFFSET_PULL = 200000;
+
 /**
  *  EXEMPLAR and INSTANCE
  *  <p>
@@ -48,8 +51,17 @@ var logger = bunyan.createLogger({
 var HueBridge = function(paramd, native) {
     var self = this;
 
-    self.paramd = _.defaults(paramd, {});
+    self.paramd = _.defaults(paramd, {
+        number: 0,
+        account: null,
+    });
     self.native = native;
+
+    if (self.native) {
+        self.queue = new iotdb.Queue("HueBridge");
+        self.url = "http://" + self.native.host + ":" + self.native.port +
+                    "/api/" + self.paramd.account + "/lights/" + self.paramd.number + "/state/";
+    }
 };
 
 /* --- lifecycle --- */
@@ -93,8 +105,8 @@ HueBridge.prototype._discover_native = function(native) {
 
     // has this hub been set up?
     var account_key = "bridges/HueBridge/" + native.uuid + "/account";
-    var account_value = iotdb.iot().cfg_get(account_key);
-    if (!account_value) {
+    var account = iotdb.iot().cfg_get(account_key);
+    if (!account) {
         logger.error({
             method: "_discover_native",
             device: native.deviceType
@@ -103,7 +115,7 @@ HueBridge.prototype._discover_native = function(native) {
     }
 
     // self.discovered(new HueBridge(self.paramd, native));
-    var url = "http://" + native.host + ":" + native.port + "/api/" + account_value + "/lights";
+    var url = "http://" + native.host + ":" + native.port + "/api/" + account + "/lights";
     unirest
         .get(url)
         .set('Accept', 'application/json')
@@ -130,6 +142,7 @@ HueBridge.prototype._discover_native = function(native) {
                 var paramd = _.defaults({
                     number: parseInt(light),
                     name: lightd.name,
+                    account: account,
                 }, self.paramd);
 
                 self.discovered(new HueBridge(paramd, native));
@@ -171,6 +184,7 @@ HueBridge.prototype.disconnect = function() {
     if (!self.native || !self.native) {
         return;
     }
+
 };
 
 /* --- data --- */
@@ -185,11 +199,50 @@ HueBridge.prototype.push = function(pushd) {
         return;
     }
 
-    logger.info({
-        method: "push",
-        unique_id: self.unique_id,
-        pushd: pushd,
-    }, "pushed");
+    var putd = {};
+
+    if (pushd.on !== undefined) {
+        putd.on = pushd.on;
+    }
+
+    var qitem = {
+        id: self.light + OFFSET_PUSH,
+        run: function () {
+            var url = self.url + "/state";
+            logger.info({
+                method: "push",
+                url: url
+            }, "do");
+
+            unirest
+                .put(url)
+                .headers({
+                    'Accept': 'application/json'
+                })
+                .type('json')
+                .send(putd)
+                .end(function (result) {
+                    self.queue.finished(qitem);
+                    if (!result.ok) {
+                        // console.log("# HueDriver.push", "not ok", "url", url, "result", result.text);
+                        logger.error({
+                            method: "push",
+                            url: url,
+                            result: result.text
+                        }, "push failed");
+                        return;
+                    }
+
+                    // console.log("- HueDriver.push", result.body);
+                    logger.info({
+                        method: "push",
+                        result: result.body,
+                        pushd: pushd,
+                    }, "pushed");
+                });
+        }
+    };
+    self.queue.add(qitem);
 };
 
 /**
