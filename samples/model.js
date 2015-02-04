@@ -28,7 +28,7 @@ wrapper.on('discovered', function(bridge) {
             return;
         }
 
-        model.set("color", colors[count++ % colors.length]);
+        model.set(":color", colors[count++ % colors.length]);
     }, 2500);
     
     console.log("+ discovered\n ", model.meta().state(), "\n ", model.thing_id());
