@@ -6,7 +6,7 @@ See <a href="samples/">the samples</a> for details how to add to your project.
 
 # HueLight
 
-This Controller connects to Philips Hue lighting. 
+Control Philips Hue lights:
 
 Functionality:
 
@@ -38,4 +38,3 @@ Low-level.
 
 * <code>on-value</code>: true or false
 * <code>color-value</code>: a hex color ("#FF0000")
-
