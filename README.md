@@ -4,6 +4,9 @@ Connect and control Philips Hue with HomeStar and IOTDB.
 
 See <a href="samples/">the samples</a> for details how to add to your project.
 
+IMPORTANT: configuration is not working yet. Let me know if you
+need this put in!
+
 # HueLight
 
 Control Philips Hue lights:
