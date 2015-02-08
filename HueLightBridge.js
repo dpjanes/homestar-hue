@@ -51,10 +51,10 @@ var OFFSET_PULL = 200000;
  *  <li><code>disconnnected</code> - this has been disconnected from a Thing
  *  </ul>
  */
-var HueLightBridge = function(paramd, native) {
+var HueLightBridge = function(initd, native) {
     var self = this;
 
-    self.paramd = _.defaults(paramd, {
+    self.initd = _.defaults(initd, {
         number: 0,
         poll: 30,
         account: null,
@@ -65,7 +65,7 @@ var HueLightBridge = function(paramd, native) {
     if (self.native) {
         self.queue = new iotdb.Queue("HueLightBridge");
         self.url = "http://" + self.native.host + ":" + self.native.port +
-                    "/api/" + self.paramd.account + "/lights/" + self.paramd.number;
+                    "/api/" + self.initd.account + "/lights/" + self.initd.number;
     }
 };
 
@@ -119,7 +119,7 @@ HueLightBridge.prototype._discover_native = function(native) {
         return;
     }
 
-    // self.discovered(new HueLightBridge(self.paramd, native));
+    // self.discovered(new HueLightBridge(self.initd, native));
     var url = "http://" + native.host + ":" + native.port + "/api/" + account + "/lights";
     unirest
         .get(url)
@@ -148,7 +148,7 @@ HueLightBridge.prototype._discover_native = function(native) {
                     number: parseInt(light),
                     name: lightd.name,
                     account: account,
-                }, self.paramd);
+                }, self.initd);
 
                 self.discovered(new HueLightBridge(paramd, native));
             }
@@ -171,7 +171,7 @@ HueLightBridge.prototype.connect = function() {
 
 HueLightBridge.prototype._setup_polling = function() {
     var self = this;
-    if (!self.paramd.poll) {
+    if (!self.initd.poll) {
         return;
     }
 
@@ -182,7 +182,7 @@ HueLightBridge.prototype._setup_polling = function() {
         }
 
         self.pull();
-    }, self.paramd.poll * 1000);
+    }, self.initd.poll * 1000);
 };
 
 HueLightBridge.prototype._forget = function() {
@@ -246,7 +246,7 @@ HueLightBridge.prototype.push = function(pushd) {
     }
 
     var qitem = {
-        id: self.paramd.number + OFFSET_PUSH,
+        id: self.initd.number + OFFSET_PUSH,
         run: function () {
             var url = self.url + "/state";
             logger.info({
@@ -300,7 +300,7 @@ HueLightBridge.prototype.pull = function() {
     }, "called");
 
     var qitem = {
-        id: self.paramd.number + OFFSET_PULL,
+        id: self.initd.number + OFFSET_PULL,
         run: function () {
             var url = self.url;
             logger.info({
@@ -346,7 +346,7 @@ HueLightBridge.prototype.pull = function() {
 
                             logger.info({
                                 method: "pull",
-                                light: self.paramd.number,
+                                light: self.initd.number,
                                 pulld: self.stated,
                             }, "pulled");
                         }
@@ -381,10 +381,10 @@ HueLightBridge.prototype.meta = function() {
     }
 
     return {
-        "iot:thing": _.id.thing_urn.unique("HueLight", self.native.uuid) + "/" + self.paramd.number,
+        "iot:thing": _.id.thing_urn.unique("HueLight", self.native.uuid) + "/" + self.initd.number,
         "iot:device": _.id.thing_urn.unique("HueLight", self.native.uuid),
-        "iot:name": self.paramd.name || "Hue",
-        "iot:number": self.paramd.number,
+        "iot:name": self.initd.name || "Hue",
+        "iot:number": self.initd.number,
         "schema:manufacturer": "http://philips.com/",
         "schema:model": "http://meethue.com/",
     };
