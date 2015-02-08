@@ -4,12 +4,10 @@
 
 var iotdb = require("iotdb");
 
-var HueLightBridge = require('../HueLightBridge').Bridge;
+var HueLight = require('../HueLight');
 
-wrapper = iotdb.bridge_wrapper(new HueLightBridge({
-    mdns: true
-}));
-wrapper.on('discovered', function(bridge) {
+wrapper = iotdb.bridge_wrapper(HueLight.binding);
+wrapper.on('bridge', function(bridge) {
     console.log("+ discovered\n ", bridge.meta());
 
     var on = false;

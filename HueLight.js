@@ -16,3 +16,8 @@ exports.Model = iotdb.make_model('HueLight')
     .o("color", iotdb.string.color)
     .make()
     ;
+
+exports.binding = {
+    bridge: require('./HueLightBridge').Bridge,
+    model: exports.Model,
+};

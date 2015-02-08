@@ -4,14 +4,10 @@
 
 var iotdb = require("iotdb");
 
-var HueLightBridge = require('../HueLightBridge').Bridge;
-var HueLightModel = require('../HueLightModel').Model;
+var HueLight = require('../HueLight');
 
-wrapper = iotdb.bridge_wrapper(new HueLightBridge());
-wrapper.on('discovered', function(bridge) {
-    var model = new HueLightModel();
-    model.bind_bridge(bridge);
-
+wrapper = iotdb.bridge_wrapper(HueLight.binding);
+wrapper.on('model', function(model) {
     model.on_change(function(model) {
         console.log("+ state\n ", model.state());
     });
