@@ -159,7 +159,7 @@ HueLightBridge.prototype._discover_native = function(native) {
  *  INSTANCE
  *  This is called when the Bridge is no longer needed. When
  */
-HueLightBridge.prototype.connect = function() {
+HueLightBridge.prototype.connect = function(connectd) {
     var self = this;
     if (!self.native) {
         return;
