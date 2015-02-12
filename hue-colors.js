@@ -12,8 +12,8 @@
 
 var bunyan = require('bunyan');
 var logger = bunyan.createLogger({
-    name: 'iotdb',
-    module: 'drivers/libs/hue-colors',
+    name: 'homestar-hue',
+    module: 'hue-colors',
 });
 
 var cssColors = {}

@@ -22,8 +22,8 @@
 
 "use strict";
 
-var iotdb = require('iotdb')
-var _ = iotdb.helpers;
+var homestar = require('homestar')
+var _ = homestar._;
 
 var hc = require('./hue-colors');
 
@@ -31,7 +31,7 @@ var unirest = require('unirest');
 
 var bunyan = require('bunyan');
 var logger = bunyan.createLogger({
-    name: 'iotdb',
+    name: 'homestar',
     module: 'HueLightBridge',
 });
 
@@ -63,7 +63,7 @@ var HueLightBridge = function(initd, native) {
     self.stated = {};
 
     if (self.native) {
-        self.queue = new iotdb.Queue("HueLightBridge");
+        self.queue = _.queue("HueLightBridge");
         self.url = "http://" + self.native.host + ":" + self.native.port +
                     "/api/" + self.initd.account + "/lights/" + self.initd.number;
     }
@@ -83,7 +83,7 @@ var HueLightBridge = function(initd, native) {
 HueLightBridge.prototype.discover = function() {
     var self = this;
     
-    var cp = iotdb.upnp.control_point();
+    var cp = homestar.upnp.control_point();
 
     cp.on("device", function (native) {
         if (native.deviceType !== 'urn:schemas-upnp-org:device:Basic:1') {
@@ -110,7 +110,7 @@ HueLightBridge.prototype._discover_native = function(native) {
 
     // has this hub been set up?
     var account_key = "bridges/HueLightBridge/" + native.uuid + "/account";
-    var account = iotdb.iot().cfg_get(account_key);
+    var account = homestar.iot().cfg_get(account_key);
     if (!account) {
         logger.error({
             method: "_discover_native",
@@ -231,7 +231,7 @@ HueLightBridge.prototype.push = function(pushd) {
     }
 
     if (_.isString(pushd.color)) {
-        var color = new iotdb.libs.Color(pushd.color);
+        var color = new _.Color(pushd.color);
         if ((color.r === 0) && (color.g === 0) && (color.b === 0)) {
             putd.on = false;
         } else {
@@ -430,7 +430,7 @@ function _h2c(state) {
         _hueds = [];
         for (var name in _.colord) {
             var hex = _.colord[name];
-            var color = new iotdb.libs.Color(hex);
+            var color = new _.Color(hex);
 
             hued = {
                 xy: hc.rgbToCIE1931(color.r, color.g, color.b),
