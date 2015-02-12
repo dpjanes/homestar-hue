@@ -2,7 +2,7 @@
  *  Connect to a Hue and just passively listen for changes
  */
 
-var iotdb = require('iotdb');
+var homestar = require('homestar');
 var HueLightBridge = require('../HueLightBridge').Bridge;
 
 var bridge_exemplar = new HueLightBridge();
