@@ -30,7 +30,6 @@ var unirest = homestar.unirest;
 var hc = require('./hue-colors');
 
 var path = require('path');
-var crypto = require('crypto');
 
 var logger = bunyan.createLogger({
     name: 'homestar-hue',
@@ -436,8 +435,6 @@ HueLightBridge.prototype._configure_devices = function(request, response) {
 HueLightBridge.prototype._configure_device = function(request, response) {
     var self = this;
 
-    console.log("HERE:_configure_device: uuid=%s action=%s", request.params.uuid, request.query.action);
-
     // find the UUID
     var native = null;
     var ds = self._find_devices_to_configure();
@@ -458,7 +455,6 @@ HueLightBridge.prototype._configure_device = function(request, response) {
 
 HueLightBridge.prototype._prepair_device = function(request, response, native) {
     var self = this;
-    console.log("HERE:_prepair_device");
 
     var template;
     var templated = {
@@ -479,13 +475,8 @@ HueLightBridge.prototype._prepair_device = function(request, response, native) {
 
 HueLightBridge.prototype._pair_device = function(request, response, native) {
     var self = this;
-    console.log("HERE:_pair_device");
 
-    var hasher = crypto.createHash('md5');
-    hasher.update("Hue");
-    hasher.update("" + Math.random());
-
-    var account_value = "hue" + hasher.digest("hex").substring(0, 16);
+    var account_value = "hue" + _.uid(16);
     var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
 
     var url = "http://" + native.host + ":" + native.port + "/api";
@@ -508,7 +499,6 @@ HueLightBridge.prototype._pair_device = function(request, response, native) {
             var error = null;
             var success = null;
 
-            console.log(result.body);
 
             if (!result.ok) {
                 template = path.join(__dirname, "templates", "error.html");
@@ -562,7 +552,6 @@ HueLightBridge.prototype._find_devices_to_configure = function() {
             native.is_configured = account ? true : false;
             _dd[native.uuid] = native;
 
-            console.log("FOUND", native.uuid);
         });
     }
 

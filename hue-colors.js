@@ -10,7 +10,10 @@
 
 'use strict';
 
-var bunyan = require('bunyan');
+var homestar = require('homestar')
+var _ = homestar._;
+var bunyan = homestar.bunyan;
+
 var logger = bunyan.createLogger({
     name: 'homestar-hue',
     module: 'hue-colors',
