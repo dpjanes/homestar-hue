@@ -1,0 +1,45 @@
+{% extends "template" %}
+{% block content %}
+<h1>Philips Hue</h1>
+<p>
+Select a Hub to configure below. 
+</p>
+
+<h2>Hubs</h2>
+{% if devices.length == 0 %}
+<p>
+    No hubs found yet - try refreshing
+    or see the troubleshooting section below.
+</p>
+{% else %}
+<ul>
+{% for d in devices %}
+    <li>
+        <a href="uuid/{{ d.uuid }}">{{ d.friendlyName }}</a>
+        {% if d.is_configured %}
+            <b>configured</b>
+        {% else %}
+            <b>not configured yet</b>
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+
+<h2>Troubleshooting</h2>
+<ul>
+    <li>
+        Sometimes it takes a while for a Hub to be found.
+        Try reloading this page
+    </li>
+    <li>
+        Make sure your Philips Hue hub is plugged in and connected
+        to the network.
+    </li>
+    <li>
+        Make sure you can see it from the Philips Hue app. 
+        If you can't see it there, you won't see it here
+    </li>
+</ul>
+{% endblock %}
