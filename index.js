@@ -22,6 +22,9 @@
 
 "use strict";
 
+
+exports.Bridge = require('./HueLightBridge').Bridge;
+
 exports.bindings = [
     require('./HueLight').binding,
 ];

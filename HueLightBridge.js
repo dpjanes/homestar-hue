@@ -24,14 +24,16 @@
 
 var homestar = require('homestar')
 var _ = homestar._;
+var bunyan = homestar.bunyan;
+var unirest = homestar.unirest;
 
 var hc = require('./hue-colors');
 
-var unirest = require('unirest');
+var path = require('path');
+var crypto = require('crypto');
 
-var bunyan = require('bunyan');
 var logger = bunyan.createLogger({
-    name: 'homestar',
+    name: 'homestar-hue',
     module: 'HueLightBridge',
 });
 
@@ -109,8 +111,8 @@ HueLightBridge.prototype._discover_native = function(native) {
     }, "found Hue");
 
     // has this hub been set up?
-    var account_key = "bridges/HueLightBridge/" + native.uuid + "/account";
-    var account = homestar.iot().cfg_get(account_key);
+    var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
+    var account = homestar.keystore().get(account_key);
     if (!account) {
         logger.error({
             method: "_discover_native",
@@ -401,13 +403,187 @@ HueLightBridge.prototype.reachable = function() {
 };
 
 /**
- *  INSTANCE.
- *  Return True if this is configured. Things
- *  that are not configured are always not reachable.
- *  If not defined, "true" is returned
+ *  App is actually an express router
  */
-HueLightBridge.prototype.configured = function() {
-    return true;
+HueLightBridge.prototype.configure = function(app) {
+    var self = this;
+
+    var ds = self._find_devices_to_configure();
+
+    app.use('/$', function(request, response) {
+        self._configure_devices(request, response);
+    });
+    app.use('/uuid/:uuid$', function(request, response) {
+        self._configure_device(request, response);
+    });
+
+    return "Philips Hue Light";
+};
+
+HueLightBridge.prototype._configure_devices = function(request, response) {
+    var self = this;
+
+    var template = path.join(__dirname, "templates", "devices.html");
+    var templated = {
+        devices: self._find_devices_to_configure(),
+    };
+
+    response
+        .set('Content-Type', 'text/html')
+        .render(template, templated);
+};
+
+HueLightBridge.prototype._configure_device = function(request, response) {
+    var self = this;
+
+    console.log("HERE:_configure_device: uuid=%s action=%s", request.params.uuid, request.query.action);
+
+    // find the UUID
+    var native = null;
+    var ds = self._find_devices_to_configure();
+    for (var di in ds) {
+        var d = ds[di];
+        if (d.uuid === request.params.uuid) {
+            native = d;
+            break;
+        }
+    }
+
+    if (native && (request.query.action === "pair")) {
+        return self._pair_device(request, response, native);
+    } else {
+        return self._prepair_device(request, response, native);
+    }
+};
+
+HueLightBridge.prototype._prepair_device = function(request, response, native) {
+    var self = this;
+    console.log("HERE:_prepair_device");
+
+    var template;
+    var templated = {
+        device: native,
+    };
+
+    if (native) {
+        template = path.join(__dirname, "templates", "pair.html");
+    } else {
+        template = path.join(__dirname, "templates", "error.html");
+        templated.error =  "This Hue has not been found yet - try reloading?";
+    }
+
+    response
+        .set('Content-Type', 'text/html')
+        .render(template, templated);
+};
+
+HueLightBridge.prototype._pair_device = function(request, response, native) {
+    var self = this;
+    console.log("HERE:_pair_device");
+
+    var hasher = crypto.createHash('md5');
+    hasher.update("Hue");
+    hasher.update("" + Math.random());
+
+    var account_value = "hue" + hasher.digest("hex").substring(0, 16);
+    var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
+
+    var url = "http://" + native.host + ":" + native.port + "/api";
+    unirest
+        .post(url)
+        .headers({
+            'Accept': 'application/json'
+        })
+        .type('json')
+        .send({
+            devicetype: "test user",
+            username: account_value
+        })
+        .end(function (result) {
+            var template;
+            var templated = {
+                device: native,
+            };
+
+            var error = null;
+            var success = null;
+
+            console.log(result.body);
+
+            if (!result.ok) {
+                template = path.join(__dirname, "templates", "error.html");
+                templated.error = result.text;
+            } else if (result.body && result.body.length && result.body[0].error) {
+                var error = result.body[0].error;
+                if (error && error.description) {
+                    templated.error = error.description;
+                } else {
+                    templated.error = "could not get error description"
+                }
+                template = path.join(__dirname, "templates", "error.html");
+            } else {
+                template = path.join(__dirname, "templates", "success.html");
+
+                homestar.keystore().save(account_key, {
+                    "account": account_value,
+                });
+            }
+
+            response
+                .set('Content-Type', 'text/html')
+                .render(template, templated);
+        });
+};
+
+var _dd;
+
+HueLightBridge.prototype._find_devices_to_configure = function() {
+    var self = this;
+
+    if (_dd === undefined) {
+        _dd = {};
+
+        var cp = homestar.upnp.control_point();
+
+        cp.on("device", function (native) {
+            if (_dd[native.uuid]) {
+                return;
+            } else if (native.deviceType !== 'urn:schemas-upnp-org:device:Basic:1') {
+                return;
+            } else if (native.manufacturer !== 'Royal Philips Electronics') {
+                return;
+            } else if (native.modelNumber !== '929000226503') {
+                return;
+            }
+
+            var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
+            var account = homestar.keystore().get(account_key);
+
+            native.is_configured = account ? true : false;
+            _dd[native.uuid] = native;
+
+            console.log("FOUND", native.uuid);
+        });
+    }
+
+    var ds = [];
+    // 
+    for (var di in _dd) {
+        var d = _dd[di];
+        ds.push(d);
+    }
+
+    ds.sort(function compare(a,b) {
+        if (a.friendlyName < b.friendlyName) {
+            return -1;
+        } else if (a.friendlyName > b.friendlyName) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+
+    return ds;
 };
 
 /* --- injected: THIS CODE WILL BE REMOVED AT RUNTIME, DO NOT MODIFY  --- */
