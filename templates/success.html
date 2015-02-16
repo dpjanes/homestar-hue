@@ -1,7 +1,14 @@
 {% extends "template" %}
 {% block content %}
-<h1>Philips Hue</h1>
-<p>
-SUCCESS: {{ success }}
+<h1>Philips Hue &mdash; {{ device.friendlyName }}</h1>
+<p class="alert alert-info" role="alert">
+Success!
+Your Philips Hue Hub has been paired with
+this computer.
 </p>
+<ul>
+    <li>
+        <a href="../..">Back to Hub List</a>
+    </li>
+</ul>
 {% endblock %}

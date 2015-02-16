@@ -7,7 +7,7 @@ Select a Hub to configure below.
 
 <h2>Hubs</h2>
 {% if devices.length == 0 %}
-<p>
+<p class="alert alert-danger" role="alert">
     No hubs found yet - try refreshing
     or see the troubleshooting section below.
 </p>
@@ -17,9 +17,9 @@ Select a Hub to configure below.
     <li>
         <a href="uuid/{{ d.uuid }}">{{ d.friendlyName }}</a>
         {% if d.is_configured %}
-            <b>configured</b>
+            &mdash; <b>configured</b>
         {% else %}
-            <b>not configured yet</b>
+            &mdash; <b>not configured yet</b>
         {% endif %}
     </li>
 {% endfor %}

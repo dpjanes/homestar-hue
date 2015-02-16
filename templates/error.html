@@ -1,7 +1,17 @@
 {% extends "template" %}
 {% block content %}
-<h1>Philips Hue</h1>
-<p>
-ERROR: {{ error }}
+<h1>Philips Hue{% if device %} &mdash; {{ device.friendlyName }}{% endif %}</h1>
+<p class="alert alert-danger" role="alert">
+{{ error }}
 </p>
+<ul>
+    {% if device %}
+    <li>
+        <a href="?action=pair">Try pairing again</a>
+    </li>
+    {% endif %}
+    <li>
+        <a href="../..">Back to Hub List</a>
+    </li>
+</ul>
 {% endblock %}

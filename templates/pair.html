@@ -1,11 +1,22 @@
 {% extends "template" %}
 {% block content %}
-<h1>Philips Hue</h1>
-<p>
+<h1>Philips Hue &mdash; {{ device.friendlyName }}</h1>
+{% if d.is_configured %}
+<p class="alert alert-info" role="alert">
+Note that this Hub is already configured,
+so you don't have to do this again.
+</p>
+{% endif %}
+<p class="alert alert-info" role="alert">
 When you're ready, have someone push the button in the
-centre of the Hue Bridge. Then press the pair button.
+centre of the Hue Hub. Then press the pair button below.
 </p>
 <p>
 <a type="button" class="btn btn-primary" href="?action=pair">Pair</a>
 </p>
+<ul>
+    <li>
+        <a href="../..">Back to Hub List</a>
+    </li>
+</ul>
 {% endblock %}
