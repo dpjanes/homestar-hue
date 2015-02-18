@@ -1,13 +1,16 @@
 /*
- *  Use a Model to manipulate semantically
+ *  How to use this module stand-alone
  */
 
-var homestar = require("homestar");
-var _ = homestar._;
+try {
+    var model = require('homestar-hue')
+} catch (x) {
+    var model = require('../index')
+}
 
-var ModelBinding = require('../HueLight');
+var _ = model.homestar._;
 
-wrapper = _.bridge_wrapper(ModelBinding.binding);
+wrapper = model.wrap("HueLight");
 wrapper.on('model', function(model) {
     model.on_change(function(model) {
         console.log("+ state\n ", model.state());

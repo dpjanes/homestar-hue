@@ -4,7 +4,7 @@
         "url": "https://github.com/dpjanes/homestar-hue/issues"
     }, 
     "dependencies": {
-        "homestar": ">=0.0.42"
+        "homestar": ">=0.0.46"
     }, 
     "description": "HomeStar / IOTDB Bridge for Philips Hue", 
     "homepage": "https://homestar.io", 
@@ -17,5 +17,5 @@
         "type": "git", 
         "url": "https://github.com/dpjanes/homestar-hue"
     }, 
-    "version": "0.0.2"
+    "version": "0.0.3"
 }

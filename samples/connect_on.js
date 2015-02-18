@@ -1,4 +1,5 @@
 /*
+ *  SEE "model.js" for the best way to use this
  *  Connect to a Hue
  */
 
