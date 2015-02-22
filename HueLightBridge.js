@@ -30,6 +30,7 @@ var unirest = homestar.unirest;
 var hc = require('./hue-colors');
 
 var path = require('path');
+var util = require('util');
 
 var logger = bunyan.createLogger({
     name: 'homestar-hue',
@@ -56,6 +57,7 @@ var HueLightBridge = function(initd, native) {
     var self = this;
 
     self.initd = _.defaults(initd, {
+        name: null,
         number: 0,
         poll: 30,
         account: null,
@@ -138,16 +140,17 @@ HueLightBridge.prototype._discover_native = function(native) {
 
             for (var light in result.body) {
                 var lightd = result.body[light];
+                var name = lightd.name;
 
                 logger.info({
                     method: "_discover_native/end()",
                     light: light,
-                    name: lightd.name,
+                    name: name,
                 }, "make light");
 
                 var paramd = _.defaults({
                     number: parseInt(light),
-                    name: lightd.name,
+                    name: name,
                     account: account,
                 }, self.initd);
 
