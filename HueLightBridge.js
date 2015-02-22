@@ -332,15 +332,15 @@ HueLightBridge.prototype.pull = function() {
                         var state = result.body.state;
                         if (state.on !== undefined) {
                             var value_on = state.on ? true : false;
-                            if (value_on !== self.stated['on-value']) {
-                                self.stated['on-value'] = value_on;
+                            if (value_on !== self.stated['on']) {
+                                self.stated['on'] = value_on;
                                 changed = true;
                             }
                         }
                         if ((state.xy !== undefined) && (state.bri !== undefined)) {
                             var value_hex = _h2c(state);
-                            if (value_hex !== self.stated['color-value']) {
-                                self.stated['color-value'] = value_hex;
+                            if (value_hex !== self.stated['color']) {
+                                self.stated['color'] = value_hex;
                                 changed = true;
                             }
                         }
