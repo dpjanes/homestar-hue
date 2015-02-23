@@ -2,10 +2,15 @@
 
 Connect and control Philips Hue with HomeStar and IOTDB.
 
-See <a href="samples/">the samples</a> for details how to add to your project.
+See <a href="samples/">the samples</a> for details how to add to your project,
+particularly <code>model.js</code> for standalone
+and <code>iotdb.js</code> for HomeStar/IOTDB.
 
-IMPORTANT: configuration is not working yet. Let me know if you
-need this put in!
+# Configuration
+
+Run
+
+    $ homestar configure homestar-hue
 
 # HueLight
 
@@ -21,23 +26,13 @@ Functionality:
 
 ## HueLightModel
 
-Semantic.
+* <code>on</code>: true or false.  <code>iot-attribute:on</code>
+* <code>color</code>: a hex color ("#FF0000").  <code>iot-attribute:color</code>
 
-### Attributes
+e.g.
 
-* <code>iot-attribute:on</code>: true or false
-* <code>iot-attribute:color</code>: a hex color ("#FF0000")
+    {
+        "on": true,
+        "color": "#FF0000"
+    }
 
-## HueLightBridge
-
-Low-level.
-
-#### Push / controls
-
-* <code>on</code>: true or false
-* <code>color</code>: a hex color ("#FF0000")
-
-#### Pull / readings
-
-* <code>on-value</code>: true or false
-* <code>color-value</code>: a hex color ("#FF0000")
