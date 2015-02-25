@@ -22,7 +22,7 @@
 
 "use strict";
 
-var iotdb = require('iotdb')
+var iotdb = require('iotdb');
 var _ = iotdb._;
 var bunyan = iotdb.bunyan;
 var unirest = iotdb.unirest;
@@ -44,7 +44,7 @@ var OFFSET_PULL = 200000;
 /**
  *  EXEMPLAR and INSTANCE
  *  <p>
- *  No subclassing needed! The following functions are 
+ *  No subclassing needed! The following functions are
  *  injected _after_ this is created, and before .discover and .connect
  *  <ul>
  *  <li><code>discovered</code> - tell IOTDB that we're talking to a new Thing
@@ -53,7 +53,7 @@ var OFFSET_PULL = 200000;
  *  <li><code>disconnnected</code> - this has been disconnected from a Thing
  *  </ul>
  */
-var HueLightBridge = function(initd, native) {
+var HueLightBridge = function (initd, native) {
     var self = this;
 
     self.initd = _.defaults(initd, {
@@ -68,14 +68,14 @@ var HueLightBridge = function(initd, native) {
     if (self.native) {
         self.queue = _.queue("HueLightBridge");
         self.url = "http://" + self.native.host + ":" + self.native.port +
-                    "/api/" + self.initd.account + "/lights/" + self.initd.number;
+            "/api/" + self.initd.account + "/lights/" + self.initd.number;
     }
 };
 
 /* --- lifecycle --- */
 
 /**
- *  EXEMPLAR. 
+ *  EXEMPLAR.
  *  Discover Hue
  *  <ul>
  *  <li>look for Things (using <code>self.bridge</code> data to initialize)
@@ -83,9 +83,9 @@ var HueLightBridge = function(initd, native) {
  *  <li>create an HueLightBridge(native)
  *  <li>call <code>self.discovered(bridge)</code> with it
  */
-HueLightBridge.prototype.discover = function() {
+HueLightBridge.prototype.discover = function () {
     var self = this;
-    
+
     var cp = iotdb.upnp().control_point();
 
     cp.on("device", function (native) {
@@ -103,7 +103,7 @@ HueLightBridge.prototype.discover = function() {
     cp.search();
 };
 
-HueLightBridge.prototype._discover_native = function(native) {
+HueLightBridge.prototype._discover_native = function (native) {
     var self = this;
 
     logger.info({
@@ -157,13 +157,13 @@ HueLightBridge.prototype._discover_native = function(native) {
                 self.discovered(new HueLightBridge(paramd, native));
             }
         });
-}
+};
 
 /**
  *  INSTANCE
  *  This is called when the Bridge is no longer needed. When
  */
-HueLightBridge.prototype.connect = function(connectd) {
+HueLightBridge.prototype.connect = function (connectd) {
     var self = this;
     if (!self.native) {
         return;
@@ -173,13 +173,13 @@ HueLightBridge.prototype.connect = function(connectd) {
     self.pull();
 };
 
-HueLightBridge.prototype._setup_polling = function() {
+HueLightBridge.prototype._setup_polling = function () {
     var self = this;
     if (!self.initd.poll) {
         return;
     }
 
-    var timer = setInterval(function() {
+    var timer = setInterval(function () {
         if (!self.native) {
             clearInterval(timer);
             return;
@@ -189,7 +189,7 @@ HueLightBridge.prototype._setup_polling = function() {
     }, self.initd.poll * 1000);
 };
 
-HueLightBridge.prototype._forget = function() {
+HueLightBridge.prototype._forget = function () {
     var self = this;
     if (!self.native) {
         return;
@@ -201,13 +201,13 @@ HueLightBridge.prototype._forget = function() {
 
     self.native = null;
     self.pulled();
-}
+};
 
 /**
- *  INSTANCE and EXEMPLAR (during shutdown). 
- *  This is called when the Bridge is no longer needed. 
+ *  INSTANCE and EXEMPLAR (during shutdown).
+ *  This is called when the Bridge is no longer needed.
  */
-HueLightBridge.prototype.disconnect = function() {
+HueLightBridge.prototype.disconnect = function () {
     var self = this;
     if (!self.native || !self.native) {
         return;
@@ -222,7 +222,7 @@ HueLightBridge.prototype.disconnect = function() {
  *  INSTANCE.
  *  Send data to whatever you're taking to.
  */
-HueLightBridge.prototype.push = function(pushd) {
+HueLightBridge.prototype.push = function (pushd) {
     var self = this;
     if (!self.native) {
         return;
@@ -292,7 +292,7 @@ HueLightBridge.prototype.push = function(pushd) {
  *  Pull data from whatever we're talking to. You don't
  *  have to implement this if it doesn't make sense
  */
-HueLightBridge.prototype.pull = function() {
+HueLightBridge.prototype.pull = function () {
     var self = this;
     if (!self.native) {
         return;
@@ -378,7 +378,7 @@ HueLightBridge.prototype.pull = function() {
  *  <li><code>schema:manufacturer</code>
  *  <li><code>schema:model</code>
  */
-HueLightBridge.prototype.meta = function() {
+HueLightBridge.prototype.meta = function () {
     var self = this;
     if (!self.native) {
         return;
@@ -396,33 +396,33 @@ HueLightBridge.prototype.meta = function() {
 
 /**
  *  INSTANCE.
- *  Return True if this is reachable. You 
+ *  Return True if this is reachable. You
  *  do not need to worry about connect / disconnect /
  *  shutdown states, they will be always checked first.
  */
-HueLightBridge.prototype.reachable = function() {
+HueLightBridge.prototype.reachable = function () {
     return this.native !== null;
 };
 
 /**
  *  App is actually an express router
  */
-HueLightBridge.prototype.configure = function(app) {
+HueLightBridge.prototype.configure = function (app) {
     var self = this;
 
     var ds = self._find_devices_to_configure();
 
-    app.use('/$', function(request, response) {
+    app.use('/$', function (request, response) {
         self._configure_devices(request, response);
     });
-    app.use('/uuid/:uuid$', function(request, response) {
+    app.use('/uuid/:uuid$', function (request, response) {
         self._configure_device(request, response);
     });
 
     return "Philips Hue Light";
 };
 
-HueLightBridge.prototype._configure_devices = function(request, response) {
+HueLightBridge.prototype._configure_devices = function (request, response) {
     var self = this;
 
     var template = path.join(__dirname, "templates", "devices.html");
@@ -435,7 +435,7 @@ HueLightBridge.prototype._configure_devices = function(request, response) {
         .render(template, templated);
 };
 
-HueLightBridge.prototype._configure_device = function(request, response) {
+HueLightBridge.prototype._configure_device = function (request, response) {
     var self = this;
 
     // find the UUID
@@ -456,7 +456,7 @@ HueLightBridge.prototype._configure_device = function(request, response) {
     }
 };
 
-HueLightBridge.prototype._prepair_device = function(request, response, native) {
+HueLightBridge.prototype._prepair_device = function (request, response, native) {
     var self = this;
 
     var template;
@@ -468,7 +468,7 @@ HueLightBridge.prototype._prepair_device = function(request, response, native) {
         template = path.join(__dirname, "templates", "pair.html");
     } else {
         template = path.join(__dirname, "templates", "error.html");
-        templated.error =  "This Hue has not been found yet - try reloading?";
+        templated.error = "This Hue has not been found yet - try reloading?";
     }
 
     response
@@ -476,7 +476,7 @@ HueLightBridge.prototype._prepair_device = function(request, response, native) {
         .render(template, templated);
 };
 
-HueLightBridge.prototype._pair_device = function(request, response, native) {
+HueLightBridge.prototype._pair_device = function (request, response, native) {
     var self = this;
 
     var account_value = "hue" + _.uid(16);
@@ -502,16 +502,15 @@ HueLightBridge.prototype._pair_device = function(request, response, native) {
             var error = null;
             var success = null;
 
-
             if (!result.ok) {
                 template = path.join(__dirname, "templates", "error.html");
                 templated.error = result.text;
             } else if (result.body && result.body.length && result.body[0].error) {
-                var error = result.body[0].error;
+                error = result.body[0].error;
                 if (error && error.description) {
                     templated.error = error.description;
                 } else {
-                    templated.error = "could not get error description"
+                    templated.error = "could not get error description";
                 }
                 template = path.join(__dirname, "templates", "error.html");
             } else {
@@ -528,7 +527,7 @@ HueLightBridge.prototype._pair_device = function(request, response, native) {
 
 var _dd;
 
-HueLightBridge.prototype._find_devices_to_configure = function() {
+HueLightBridge.prototype._find_devices_to_configure = function () {
     var self = this;
 
     if (_dd === undefined) {
@@ -563,7 +562,7 @@ HueLightBridge.prototype._find_devices_to_configure = function() {
         ds.push(d);
     }
 
-    ds.sort(function compare(a,b) {
+    ds.sort(function compare(a, b) {
         if (a.friendlyName < b.friendlyName) {
             return -1;
         } else if (a.friendlyName > b.friendlyName) {
@@ -577,16 +576,17 @@ HueLightBridge.prototype._find_devices_to_configure = function() {
 };
 
 /* --- injected: THIS CODE WILL BE REMOVED AT RUNTIME, DO NOT MODIFY  --- */
-HueLightBridge.prototype.discovered = function(bridge) {
+HueLightBridge.prototype.discovered = function (bridge) {
     throw new Error("HueLightBridge.discovered not implemented");
 };
 
-HueLightBridge.prototype.pulled = function(pulld) {
+HueLightBridge.prototype.pulled = function (pulld) {
     throw new Error("HueLightBridge.pulled not implemented");
 };
 
 // hack! horrible horrible hack!
 var _hueds = null;
+
 function _h2c(state) {
     var hued;
 
@@ -632,4 +632,3 @@ function _h2c(state) {
  *  API
  */
 exports.Bridge = HueLightBridge;
-

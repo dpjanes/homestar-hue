@@ -10,7 +10,7 @@
 
 'use strict';
 
-var iotdb = require('iotdb')
+var iotdb = require('iotdb');
 var _ = iotdb._;
 var bunyan = iotdb.bunyan;
 
@@ -19,7 +19,7 @@ var logger = bunyan.createLogger({
     module: 'hue-colors',
 });
 
-var cssColors = {}
+var cssColors = {};
 
 var colors = function () {
 
@@ -290,6 +290,6 @@ var colors = function () {
         hexFullBlue: "0000FF",
         hexFullWhite: "FFFFFF"
     };
-}();
+};
 
-module.exports = colors;
+module.exports = colors();

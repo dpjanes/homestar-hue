@@ -6,7 +6,7 @@
  *  2014-01-26
  */
 
-var iotdb = require("iotdb")
+var iotdb = require("iotdb");
 
 exports.Model = iotdb.make_model('HueLight')
     .facet(":lighting")
@@ -14,8 +14,7 @@ exports.Model = iotdb.make_model('HueLight')
     .description("Philips Hue colored light")
     .o("on", iotdb.boolean.on)
     .o("color", iotdb.string.color)
-    .make()
-    ;
+    .make();
 
 exports.binding = {
     bridge: require('./HueLightBridge').Bridge,
