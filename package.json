@@ -5,8 +5,7 @@
     }, 
     "dependencies": {
         "iotdb": ">=0.0.46",
-        "iotdb-upnp": ">=0.0.0",
-        "bunyan": ">=0.0.0"
+        "iotdb-upnp": ">=0.0.0"
     }, 
     "description": "HomeStar / IOTDB Bridge for Philips Hue", 
     "homepage": "https://homestar.io", 
