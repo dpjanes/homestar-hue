@@ -6,6 +6,20 @@ See <a href="samples/">the samples</a> for details how to add to your project,
 particularly <code>model.js</code> for standalone
 and <code>iotdb.js</code> for HomeStar/IOTDB.
 
+# Quick Start
+
+Set all lights to red
+
+	$ npm install -g homestar
+	$ npm install iotdb
+	$ homestar install homestar-hue
+    $ homestar configure homestar-hue 
+	$ node
+	>>> iotdb = require('iotdb')
+	>>> iot = iotdb.iot()
+	>>> things = iot.connect("HueLight")
+	>>> things.set(":color", "red")
+
 # Configuration
 
 Run
