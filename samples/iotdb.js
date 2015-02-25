@@ -3,7 +3,7 @@
  *  This is the best way to do this
  */
 
-var iotdb = require('iotdb') /* or iotdb = require('homestar').iotdb */
+var iotdb = require('iotdb') 
 var iot = iotdb.iot();
 
 var things = iot.connect('HueLight');

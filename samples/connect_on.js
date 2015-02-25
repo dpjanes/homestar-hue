@@ -1,9 +1,8 @@
 /*
  *  SEE "model.js" for the best way to use this
- *  Connect to a Hue
+ *  Connect to a Hue and cycle through colors
  */
 
-var homestar = require('homestar');
 var HueLightBridge = require('../HueLightBridge').Bridge;
 
 var bridge_exemplar = new HueLightBridge();

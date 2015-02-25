@@ -22,10 +22,10 @@
 
 "use strict";
 
-var homestar = require('homestar')
-var _ = homestar._;
-var bunyan = homestar.bunyan;
-var unirest = homestar.unirest;
+var iotdb = require('iotdb')
+var _ = iotdb._;
+var bunyan = iotdb.bunyan;
+var unirest = iotdb.unirest;
 
 var hc = require('./hue-colors');
 
@@ -86,7 +86,7 @@ var HueLightBridge = function(initd, native) {
 HueLightBridge.prototype.discover = function() {
     var self = this;
     
-    var cp = homestar.upnp.control_point();
+    var cp = iotdb.upnp().control_point();
 
     cp.on("device", function (native) {
         if (native.deviceType !== 'urn:schemas-upnp-org:device:Basic:1') {
@@ -113,7 +113,7 @@ HueLightBridge.prototype._discover_native = function(native) {
 
     // has this hub been set up?
     var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
-    var account = homestar.keystore().get(account_key);
+    var account = iotdb.keystore().get(account_key);
     if (!account) {
         logger.error({
             method: "_discover_native",
@@ -517,9 +517,7 @@ HueLightBridge.prototype._pair_device = function(request, response, native) {
             } else {
                 template = path.join(__dirname, "templates", "success.html");
 
-                homestar.keystore().save(account_key, {
-                    "account": account_value,
-                });
+                iotdb.keystore().save(account_key, account_value);
             }
 
             response
@@ -536,7 +534,7 @@ HueLightBridge.prototype._find_devices_to_configure = function() {
     if (_dd === undefined) {
         _dd = {};
 
-        var cp = homestar.upnp.control_point();
+        var cp = iotdb.upnp().control_point();
 
         cp.on("device", function (native) {
             if (_dd[native.uuid]) {
@@ -550,7 +548,7 @@ HueLightBridge.prototype._find_devices_to_configure = function() {
             }
 
             var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
-            var account = homestar.keystore().get(account_key);
+            var account = iotdb.keystore().get(account_key);
 
             native.is_configured = account ? true : false;
             _dd[native.uuid] = native;

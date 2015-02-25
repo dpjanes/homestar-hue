@@ -6,14 +6,14 @@
  *  2014-01-26
  */
 
-var homestar = require("homestar")
+var iotdb = require("iotdb")
 
-exports.Model = homestar.make_model('HueLight')
+exports.Model = iotdb.make_model('HueLight')
     .facet(":lighting")
     .name("Hue Light")
     .description("Philips Hue colored light")
-    .o("on", homestar.boolean.on)
-    .o("color", homestar.string.color)
+    .o("on", iotdb.boolean.on)
+    .o("color", iotdb.string.color)
     .make()
     ;
 

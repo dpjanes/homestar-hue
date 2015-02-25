@@ -28,7 +28,7 @@ exports.bindings = [
     require('./HueLight').binding,
 ];
 
-exports.homestar = require("homestar");
+exports.iotdb = require("iotdb");
 exports.wrap = function(name, initd) {
-    return exports.homestar.make_wrap(name, exports.bindings, initd)
+    return exports.iotdb.make_wrap(name, exports.bindings, initd)
 };

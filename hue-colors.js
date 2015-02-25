@@ -10,9 +10,9 @@
 
 'use strict';
 
-var homestar = require('homestar')
-var _ = homestar._;
-var bunyan = homestar.bunyan;
+var iotdb = require('iotdb')
+var _ = iotdb._;
+var bunyan = iotdb.bunyan;
 
 var logger = bunyan.createLogger({
     name: 'homestar-hue',

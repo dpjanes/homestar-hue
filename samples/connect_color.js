@@ -3,7 +3,6 @@
  *  Connect to a Hue and cycle through colors
  */
 
-var homestar = require('homestar');
 var HueLightBridge = require('../HueLightBridge').Bridge;
 
 var bridge_exemplar = new HueLightBridge();
