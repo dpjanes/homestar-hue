@@ -4,8 +4,9 @@
         "url": "https://github.com/dpjanes/homestar-hue/issues"
     }, 
     "dependencies": {
-        "iotdb": ">=0.4.16", 
-        "iotdb-upnp": ">=0.0.1"
+        "iotdb": ">=0.5.2", 
+        "iotdb-upnp": ">=0.0.4", 
+        "unirest": "~0.4.0"
     }, 
     "description": "HomeStar / IOTDB Bridge for Philips Hue", 
     "devDependencies": {
@@ -20,11 +21,7 @@
         "request": "^2.36.0"
     }, 
     "homepage": "https://homestar.io", 
-    "homestar": {
-        "dependencies": {
-            "iotdb-upnp": ">=0.0.1"
-        }
-    }, 
+    "homestar": {}, 
     "license": "Apache-2.0", 
     "main": "index.js", 
     "name": "homestar-hue", 

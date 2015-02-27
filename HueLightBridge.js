@@ -25,7 +25,7 @@
 var iotdb = require('iotdb');
 var _ = iotdb._;
 var bunyan = iotdb.bunyan;
-var unirest = iotdb.unirest;
+var unirest = require('unirest');
 
 var hc = require('./hue-colors');
 
@@ -56,12 +56,15 @@ var OFFSET_PULL = 200000;
 var HueLightBridge = function (initd, native) {
     var self = this;
 
-    self.initd = _.defaults(initd, {
-        name: null,
-        number: 0,
-        poll: 30,
-        account: null,
-    });
+    self.initd = _.defaults(initd,
+        iotdb.keystore().get("bridges/HueLightBridge/initd"),
+        {
+            name: null,
+            number: 0,
+            poll: 30,
+            account: null,
+        }
+    );
     self.native = native;
     self.stated = {};
 
@@ -86,7 +89,7 @@ var HueLightBridge = function (initd, native) {
 HueLightBridge.prototype.discover = function () {
     var self = this;
 
-    var cp = iotdb.upnp().control_point();
+    var cp = iotdb.module("iotdb-upnp").control_point();
 
     cp.on("device", function (native) {
         if (native.deviceType !== 'urn:schemas-upnp-org:device:Basic:1') {
@@ -533,7 +536,7 @@ HueLightBridge.prototype._find_devices_to_configure = function () {
     if (_dd === undefined) {
         _dd = {};
 
-        var cp = iotdb.upnp().control_point();
+        var cp = iotdb.module("iotdb-upnp").control_point();
 
         cp.on("device", function (native) {
             if (_dd[native.uuid]) {
