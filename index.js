@@ -22,8 +22,6 @@
 
 "use strict";
 
-exports.iotdb_module = true;
-
 exports.Bridge = require('./HueLightBridge').Bridge;
 exports.bindings = [
     require('./HueLight').binding,
