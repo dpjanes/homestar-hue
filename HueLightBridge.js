@@ -284,6 +284,9 @@ HueLightBridge.prototype.push = function (pushd) {
                         result: result.body,
                         pushd: pushd,
                     }, "pushed");
+
+                    /* we just assume it worked and can update the istate */
+                    self.pulled(pushd);
                 });
         }
     };
