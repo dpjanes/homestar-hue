@@ -379,7 +379,7 @@ HueLightBridge.prototype.pull = function () {
  *  <ul>
  *  <li><code>iot:thing</code> required - a unique ID
  *  <li><code>iot:device</code> suggested if linking multiple things together
- *  <li><code>iot:name</code>
+ *  <li><code>schema:name</code>
  *  <li><code>iot:number</code>
  *  <li><code>schema:manufacturer</code>
  *  <li><code>schema:model</code>
@@ -393,7 +393,7 @@ HueLightBridge.prototype.meta = function () {
     return {
         "iot:thing": _.id.thing_urn.unique("HueLight", self.native.uuid, self.initd.number),
         "iot:device": _.id.thing_urn.unique("HueLight", self.native.uuid),
-        "iot:name": self.initd.name || "Hue",
+        "schema:name": self.initd.name || "Hue",
         "iot:number": self.initd.number,
         "schema:manufacturer": "http://philips.com/",
         "schema:model": "http://meethue.com/",
