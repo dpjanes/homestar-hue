@@ -237,7 +237,7 @@ HueLightBridge.prototype.push = function (pushd) {
         putd.on = pushd.on;
     }
 
-    if (_.isString(pushd.color)) {
+    if (_.is.String(pushd.color)) {
         var color = new _.Color(pushd.color);
         if ((color.r === 0) && (color.g === 0) && (color.b === 0)) {
             putd.on = false;
@@ -600,8 +600,8 @@ function _h2c(state) {
 
     if (_hueds === null) {
         _hueds = [];
-        for (var name in _.colord) {
-            var hex = _.colord[name];
+        for (var name in _.color.colord) {
+            var hex = _.color.colord[name];
             var color = new _.Color(hex);
 
             hued = {
