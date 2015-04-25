@@ -24,7 +24,7 @@
 
 exports.Bridge = require('./HueLightBridge').Bridge;
 exports.bindings = [
-    require('./HueLight').binding,
+    require('./models/HueLight').binding,
 ];
 
 exports.iotdb = require("iotdb");

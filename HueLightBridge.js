@@ -51,8 +51,7 @@ var HueLightBridge = function (initd, native) {
     var self = this;
 
     self.initd = _.defaults(initd,
-        iotdb.keystore().get("bridges/HueLightBridge/initd"),
-        {
+        iotdb.keystore().get("bridges/HueLightBridge/initd"), {
             name: null,
             number: 0,
             poll: 30,
@@ -241,10 +240,6 @@ HueLightBridge.prototype.push = function (pushd) {
             putd.bri = Math.max(color.r, color.g, color.b) * 255;
             putd.on = true;
         }
-
-        self.pulled({
-            on: putd.on
-        });
     }
 
     var qitem = {
@@ -280,7 +275,9 @@ HueLightBridge.prototype.push = function (pushd) {
                         pushd: pushd,
                     }, "pushed");
 
-                    /* we just assume it worked and can update the istate */
+                    // we just assume it worked and can update the istate 
+                    pushd = _.clone(pushd);
+                    pushd.on = putd.on;
                     self.pulled(pushd);
                 });
         }
