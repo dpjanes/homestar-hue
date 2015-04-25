@@ -78,7 +78,7 @@ HueLightBridge.prototype.name = function () {
 /* --- lifecycle --- */
 
 /**
- *  See {iotdb.bridge.Bridge#XXX} for documentation.
+ *  See {iotdb.bridge.Bridge#discover} for documentation.
  */
 HueLightBridge.prototype.discover = function () {
     var self = this;
@@ -157,7 +157,7 @@ HueLightBridge.prototype._discover_native = function (native) {
 };
 
 /**
- *  See {iotdb.bridge.Bridge#XXX} for documentation.
+ *  See {iotdb.bridge.Bridge#connect} for documentation.
  */
 HueLightBridge.prototype.connect = function (connectd) {
     var self = this;
@@ -202,7 +202,7 @@ HueLightBridge.prototype._forget = function () {
 };
 
 /**
- *  See {iotdb.bridge.Bridge#XXX} for documentation.
+ *  See {iotdb.bridge.Bridge#disconnect} for documentation.
  */
 HueLightBridge.prototype.disconnect = function () {
     var self = this;
@@ -216,7 +216,7 @@ HueLightBridge.prototype.disconnect = function () {
 /* --- data --- */
 
 /**
- *  See {iotdb.bridge.Bridge#XXX} for documentation.
+ *  See {iotdb.bridge.Bridge#push} for documentation.
  */
 HueLightBridge.prototype.push = function (pushd) {
     var self = this;
@@ -289,7 +289,7 @@ HueLightBridge.prototype.push = function (pushd) {
 };
 
 /**
- *  See {iotdb.bridge.Bridge#XXX} for documentation.
+ *  See {iotdb.bridge.Bridge#pull} for documentation.
  */
 HueLightBridge.prototype.pull = function () {
     var self = this;
@@ -364,7 +364,7 @@ HueLightBridge.prototype.pull = function () {
 /* --- state --- */
 
 /**
- *  See {iotdb.bridge.Bridge#XXX} for documentation.
+ *  See {iotdb.bridge.Bridge#meta} for documentation.
  */
 HueLightBridge.prototype.meta = function () {
     var self = this;
@@ -383,7 +383,7 @@ HueLightBridge.prototype.meta = function () {
 };
 
 /**
- *  See {iotdb.bridge.Bridge#XXX} for documentation.
+ *  See {iotdb.bridge.Bridge#reachable} for documentation.
  */
 HueLightBridge.prototype.reachable = function () {
     return this.native !== null;
