@@ -556,15 +556,6 @@ HueLightBridge.prototype._find_devices_to_configure = function () {
     return ds;
 };
 
-/* --- injected: THIS CODE WILL BE REMOVED AT RUNTIME, DO NOT MODIFY  --- */
-HueLightBridge.prototype.discovered = function (bridge) {
-    throw new Error("HueLightBridge.discovered not implemented");
-};
-
-HueLightBridge.prototype.pulled = function (pulld) {
-    throw new Error("HueLightBridge.pulled not implemented");
-};
-
 // hack! horrible horrible hack!
 var _hueds = null;
 
