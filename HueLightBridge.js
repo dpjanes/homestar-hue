@@ -277,7 +277,9 @@ HueLightBridge.prototype.push = function (pushd) {
 
                     // we just assume it worked and can update the istate 
                     pushd = _.clone(pushd);
-                    pushd.on = putd.on;
+                    if (putd.on !== undefined) {
+                        pushd.on = putd.on;
+                    }
                     self.pulled(pushd);
                 });
         }
