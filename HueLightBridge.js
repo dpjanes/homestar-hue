@@ -394,6 +394,8 @@ HueLightBridge.prototype.reachable = function () {
 HueLightBridge.prototype.configure = function (app) {
     var self = this;
 
+    self.html_root = app.html_root || "/";
+
     var ds = self._find_devices_to_configure();
 
     app.use('/$', function (request, response) {
@@ -411,6 +413,7 @@ HueLightBridge.prototype._configure_devices = function (request, response) {
 
     var template = path.join(__dirname, "templates", "devices.html");
     var templated = {
+        html_root: self.html_root,
         devices: self._find_devices_to_configure(),
     };
 
@@ -445,6 +448,7 @@ HueLightBridge.prototype._prepair_device = function (request, response, native) 
 
     var template;
     var templated = {
+        html_root: self.html_root,
         device: native,
     };
 
@@ -480,6 +484,7 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
         .end(function (result) {
             var template;
             var templated = {
+                html_root: self.html_root,
                 device: native,
             };
 

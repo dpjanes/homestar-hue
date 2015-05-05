@@ -15,7 +15,7 @@ Select a Hub to configure below.
 <ul>
 {% for d in devices %}
     <li>
-        <a href="uuid/{{ d.uuid }}">{{ d.friendlyName }}</a>
+        <a href="{{ html_root }}/uuid/{{ d.uuid }}">{{ d.friendlyName }}</a>
         {% if d.is_configured %}
             &mdash; <b>configured</b>
         {% else %}
