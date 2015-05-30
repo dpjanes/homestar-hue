@@ -217,9 +217,10 @@ HueLightBridge.prototype.disconnect = function () {
 /**
  *  See {iotdb.bridge.Bridge#push} for documentation.
  */
-HueLightBridge.prototype.push = function (pushd) {
+HueLightBridge.prototype.push = function (pushd, done) {
     var self = this;
     if (!self.native) {
+        done(new Error("not connected"));
         return;
     }
 
@@ -266,6 +267,7 @@ HueLightBridge.prototype.push = function (pushd) {
                             url: url,
                             result: result.text
                         }, "push failed");
+                        done(new Error("push failed: " + result.text));
                         return;
                     }
 
@@ -281,6 +283,7 @@ HueLightBridge.prototype.push = function (pushd) {
                         pushd.on = putd.on;
                     }
                     self.pulled(pushd);
+                    done();
                 });
         }
     };
