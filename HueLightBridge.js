@@ -299,7 +299,7 @@ HueLightBridge.prototype.pull = function () {
         return;
     }
 
-    logger.info({
+    logger.debug({
         method: "pull",
         unique_id: self.unique_id
     }, "called");
@@ -308,7 +308,7 @@ HueLightBridge.prototype.pull = function () {
         id: self.initd.number + OFFSET_PULL,
         run: function () {
             var url = self.url;
-            logger.info({
+            logger.debug({
                 method: "pull",
                 url: url
             }, "do");
@@ -349,7 +349,7 @@ HueLightBridge.prototype.pull = function () {
                         if (changed) {
                             self.pulled(self.stated);
 
-                            logger.info({
+                            logger.debug({
                                 method: "pull",
                                 light: self.initd.number,
                                 pulld: self.stated,
