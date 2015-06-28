@@ -267,7 +267,7 @@ HueLightBridge.prototype.push = function (pushd, done) {
                             url: url,
                             result: result.text
                         }, "push failed");
-                        done(new Error("push failed: " + result.text));
+                        // done(new Error("push failed: " + result.text));
                         return;
                     }
 
@@ -283,9 +283,11 @@ HueLightBridge.prototype.push = function (pushd, done) {
                         pushd.on = putd.on;
                     }
                     self.pulled(pushd);
-                    done();
                 });
-        }
+        },
+        coda: function() {
+            done();
+        },
     };
     self.queue.add(qitem);
 };
