@@ -12,8 +12,8 @@ exports.Model = iotdb.make_model('HueLight')
     .facet(":lighting")
     .name("Hue Light")
     .description("Philips Hue colored light")
-    .o("on", iotdb.boolean.on)
-    .o("color", iotdb.string.color)
+    .io("on", iotdb.boolean.on)
+    .io("color", iotdb.string.color)
     .make();
 
 exports.binding = {
