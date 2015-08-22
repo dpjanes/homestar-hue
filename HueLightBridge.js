@@ -380,7 +380,7 @@ HueLightBridge.prototype.meta = function () {
         "iot:thing-id": _.id.thing_urn.unique("HueLight", self.native.uuid, self.initd.number),
         "iot:device-id": _.id.thing_urn.unique("HueLight", self.native.uuid),
         "schema:name": self.initd.name || "Hue",
-        "iot:number": self.initd.number,
+        "iot:thing-number": self.initd.number,
         "schema:manufacturer": "http://philips.com/",
         "schema:model": "http://meethue.com/",
     };
