@@ -4,19 +4,20 @@
         "url": "https://github.com/dpjanes/homestar-hue/issues"
     }, 
     "dependencies": {
+        "iotdb": ">=0.10.0", 
         "unirest": "~0.4.2"
     }, 
     "description": "HomeStar / IOTDB Bridge for Philips Hue", 
     "devDependencies": {
         "grunt": "~0.4.5", 
-        "grunt-contrib-jshint": "~0.11.2", 
+        "grunt-contrib-jshint": "~0.11.3", 
         "grunt-contrib-nodeunit": "~0.4.1", 
-        "grunt-contrib-uglify": "~0.9.1", 
+        "grunt-contrib-uglify": "~0.9.2", 
         "grunt-contrib-watch": "~0.6.1", 
         "grunt-jsbeautifier": "~0.2.10", 
         "jshint-stylish": "~2.0.1", 
         "load-grunt-tasks": "~3.2.0", 
-        "request": "~2.60.0"
+        "request": "~2.62.0"
     }, 
     "homepage": "https://homestar.io", 
     "homestar": {}, 
@@ -24,7 +25,6 @@
     "main": "index.js", 
     "name": "homestar-hue", 
     "peerDependencies": {
-        "iotdb": "~0.9.3", 
         "iotdb-upnp": "~0.0.9"
     }, 
     "private": false, 
@@ -35,5 +35,5 @@
     "scripts": {
         "test": "grunt"
     }, 
-    "version": "0.1.8"
+    "version": "0.1.10"
 }
