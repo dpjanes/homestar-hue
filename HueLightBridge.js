@@ -285,7 +285,7 @@ HueLightBridge.prototype.push = function (pushd, done) {
                     self.pulled(pushd);
                 });
         },
-        coda: function() {
+        coda: function () {
             done();
         },
     };

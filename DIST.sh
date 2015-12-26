@@ -32,8 +32,8 @@ echo "=================="
     tar cf - \
         README.md LICENSE homestar.json package.json \
         models/HueLight.js models/HueLight.json \
-        templates/*html \
-        *.js \
+        templates/*.html \
+        HueLightBridge.js hue-colors.js index.js \
         |
     ( cd "${NPM_DST}" && tar xvf - )
 
