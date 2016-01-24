@@ -24,7 +24,6 @@
 
 var iotdb = require('iotdb');
 var _ = iotdb._;
-var bunyan = iotdb.bunyan;
 var unirest = require('unirest');
 
 var hc = require('./hue-colors');
@@ -32,7 +31,7 @@ var hc = require('./hue-colors');
 var path = require('path');
 var util = require('util');
 
-var logger = bunyan.createLogger({
+var logger = iotdb.logger({
     name: 'homestar-hue',
     module: 'HueLightBridge',
 });
