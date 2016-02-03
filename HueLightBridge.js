@@ -471,7 +471,7 @@ HueLightBridge.prototype._prepair_device = function (request, response, native) 
 HueLightBridge.prototype._pair_device = function (request, response, native) {
     var self = this;
 
-    var account_value = "hue" + _.uid(16);
+    var account_value = "hue" + _.random.id(16);
     var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
 
     var url = "http://" + native.host + ":" + native.port + "/api";
