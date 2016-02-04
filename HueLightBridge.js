@@ -232,7 +232,7 @@ HueLightBridge.prototype.push = function (pushd, done) {
     }
 
     if (_.is.String(pushd.color)) {
-        var color = new _.Color(pushd.color);
+        var color = new _.color.Color(pushd.color);
         if ((color.r === 0) && (color.g === 0) && (color.b === 0)) {
             putd.on = false;
         } else {
@@ -580,7 +580,7 @@ function _h2c(state) {
         _hueds = [];
         for (var name in _.color.colord) {
             var hex = _.color.colord[name];
-            var color = new _.Color(hex);
+            var color = new _.color.Color(hex);
 
             hued = {
                 xy: hc.rgbToCIE1931(color.r, color.g, color.b),
