@@ -28,7 +28,8 @@
   "schema:name": "Hue Light",
   "schema:description": "Philips Hue colored light",
   "iot:facet": [
-    "iot-facet:lighting"
+    "iot-facet:lighting",
+    "iot-facet:lighting.light"
   ],
   "iot:attribute": [
     {
