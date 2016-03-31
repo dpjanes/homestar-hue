@@ -526,7 +526,7 @@ HueLightBridge.prototype._find_devices_to_configure = function () {
     if (_dd === undefined) {
         _dd = {};
 
-        var cp = iotdb.module("iotdb-upnp").control_point();
+        var cp = require("iotdb-upnp").control_point();
 
         cp.on("device", function (native) {
             if (_dd[native.uuid]) {

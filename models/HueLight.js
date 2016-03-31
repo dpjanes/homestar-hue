@@ -10,5 +10,5 @@ var iotdb = require("iotdb");
 
 exports.binding = {
     bridge: require('../HueLightBridge').Bridge,
-    model: require('./HueLight.json'),
+    model: require('./hue-light.json'),
 };
