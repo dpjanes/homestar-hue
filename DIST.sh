@@ -31,7 +31,7 @@ echo "=================="
 
     tar cf - \
         README.md LICENSE homestar.json package.json \
-        models/HueLight.js models/HueLight.json \
+        models/*.js models/*.json \
         templates/*.html \
         HueLightBridge.js hue-colors.js index.js \
         |
