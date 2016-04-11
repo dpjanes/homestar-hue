@@ -88,7 +88,7 @@ HueLightBridge.prototype.discover = function () {
             return;
         } else if (native.manufacturer !== 'Royal Philips Electronics') {
             return;
-        } else if (native.modelNumber !== '929000226503') {
+        } else if ((native.modelNumber !== '929000226503') && (native.modelNumber !== 'BSB002')) {
             return;
         }
 
@@ -265,8 +265,10 @@ HueLightBridge.prototype.push = function (pushd, done) {
                             method: "push",
                             url: url,
                             result: result.text
-                        }, "push failed");
+                        }, "push failed - will forget this Thing and retry reconnect");
                         // done(new Error("push failed: " + result.text));
+                        
+                        self._forget();
                         return;
                     }
 
@@ -325,7 +327,9 @@ HueLightBridge.prototype.pull = function () {
                             method: "pull",
                             url: url,
                             result: result
-                        }, "not ok");
+                        }, "pull failed - will forget this Thing and retry reconnect");
+
+                        self._forget();
                         return;
                     }
 
