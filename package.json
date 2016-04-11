@@ -14,9 +14,9 @@
         "grunt-contrib-nodeunit": "~1.0.0", 
         "grunt-contrib-uglify": "~1.0.1", 
         "grunt-contrib-watch": "~1.0.0", 
-        "grunt-jsbeautifier": "~0.2.10", 
+        "grunt-jsbeautifier": "~0.2.12", 
         "jshint-stylish": "~2.1.0", 
-        "load-grunt-tasks": "~3.4.1", 
+        "load-grunt-tasks": "~3.5.0", 
         "request": "~2.70.0"
     }, 
     "homepage": "https://homestar.io", 
@@ -35,5 +35,5 @@
     "scripts": {
         "test": "grunt"
     }, 
-    "version": "0.1.22"
+    "version": "0.1.23"
 }
