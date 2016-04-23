@@ -539,7 +539,7 @@ HueLightBridge.prototype._find_devices_to_configure = function () {
                 return;
             } else if (native.manufacturer !== 'Royal Philips Electronics') {
                 return;
-            } else if (native.modelNumber !== '929000226503') {
+            } else if ((native.modelNumber !== '929000226503') && (native.modelNumber !== 'BSB002')) {
                 return;
             }
 
