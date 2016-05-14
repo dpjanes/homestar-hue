@@ -44,7 +44,7 @@ var OFFSET_PULL = 200000;
  *  See {iotdb.bridge.Bridge#Bridge} for documentation.
  *  <p>
  *  @param {object|undefined} native
- *  only used for instances, should be 
+ *  only used for instances, should be
  */
 var HueLightBridge = function (initd, native) {
     var self = this;
@@ -85,10 +85,13 @@ HueLightBridge.prototype.discover = function () {
 
     cp.on("device", function (native) {
         if (native.deviceType !== 'urn:schemas-upnp-org:device:Basic:1') {
+            console.log("Unsupported device type:", native.deviceType)
             return;
         } else if (native.manufacturer !== 'Royal Philips Electronics') {
+            console.log("Unsupported manufacturer:", native.manufacturer)
             return;
-        } else if (native.modelNumber !== '929000226503') {
+        } else if ((native.modelNumber !== '929000226503') && (native.modelNumber !== 'BSB002')) {
+            console.log("Unsupported model number:", native.modelNumber)
             return;
         }
 
@@ -265,8 +268,10 @@ HueLightBridge.prototype.push = function (pushd, done) {
                             method: "push",
                             url: url,
                             result: result.text
-                        }, "push failed");
+                        }, "push failed - will forget this Thing and retry reconnect");
                         // done(new Error("push failed: " + result.text));
+
+                        self._forget();
                         return;
                     }
 
@@ -276,7 +281,7 @@ HueLightBridge.prototype.push = function (pushd, done) {
                         pushd: pushd,
                     }, "pushed");
 
-                    // we just assume it worked and can update the istate 
+                    // we just assume it worked and can update the istate
                     pushd = _.clone(pushd);
                     if (putd.on !== undefined) {
                         pushd.on = putd.on;
@@ -325,7 +330,9 @@ HueLightBridge.prototype.pull = function () {
                             method: "pull",
                             url: url,
                             result: result
-                        }, "not ok");
+                        }, "pull failed - will forget this Thing and retry reconnect");
+
+                        self._forget();
                         return;
                     }
 
@@ -472,6 +479,7 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
     var self = this;
 
     var account_value = "hue" + _.random.id(16);
+	var device_key = "/bridges/HueLightBridge/" + native.uuid + "/device";
     var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
 
     var url = "http://" + native.host + ":" + native.port + "/api";
@@ -482,8 +490,7 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
         })
         .type('json')
         .send({
-            devicetype: "test user",
-            username: account_value
+            devicetype: "homestar#" + account_value
         })
         .end(function (result) {
             var template;
@@ -509,7 +516,17 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
             } else {
                 template = path.join(__dirname, "templates", "success.html");
 
-                iotdb.keystore().save(account_key, account_value);
+				var body = result.body;
+				var username = account_value;
+				if (body.length) {
+					body = body[0]
+				}
+				if (body.success && body.success.username) {
+					username = body.success.username
+				}
+
+                iotdb.keystore().save(device_key, account_value);
+				iotdb.keystore().save(account_key, username);
             }
 
             response
@@ -535,7 +552,7 @@ HueLightBridge.prototype._find_devices_to_configure = function () {
                 return;
             } else if (native.manufacturer !== 'Royal Philips Electronics') {
                 return;
-            } else if (native.modelNumber !== '929000226503') {
+            } else if ((native.modelNumber !== '929000226503') && (native.modelNumber !== 'BSB002')) {
                 return;
             }
 
@@ -549,7 +566,7 @@ HueLightBridge.prototype._find_devices_to_configure = function () {
     }
 
     var ds = [];
-    // 
+    //
     for (var di in _dd) {
         var d = _dd[di];
         ds.push(d);
