@@ -44,7 +44,7 @@ var OFFSET_PULL = 200000;
  *  See {iotdb.bridge.Bridge#Bridge} for documentation.
  *  <p>
  *  @param {object|undefined} native
- *  only used for instances, should be 
+ *  only used for instances, should be
  */
 var HueLightBridge = function (initd, native) {
     var self = this;
@@ -89,6 +89,13 @@ HueLightBridge.prototype.discover = function () {
         } else if (native.manufacturer !== 'Royal Philips Electronics') {
             return;
         } else if ((native.modelNumber !== '929000226503') && (native.modelNumber !== 'BSB002')) {
+            logger.warn({
+                method: "discover",
+                cause: "if you believe this is a Hue, please contact davidjanes@iotdb.org",
+                deviceType: native.deviceType,
+                manufacturer: native.manufacturer,
+                modelNumber: native.modelNumber,
+            }, "unsupported model number");
             return;
         }
 
@@ -266,8 +273,7 @@ HueLightBridge.prototype.push = function (pushd, done) {
                             url: url,
                             result: result.text
                         }, "push failed - will forget this Thing and retry reconnect");
-                        // done(new Error("push failed: " + result.text));
-                        
+
                         self._forget();
                         return;
                     }
@@ -278,7 +284,7 @@ HueLightBridge.prototype.push = function (pushd, done) {
                         pushd: pushd,
                     }, "pushed");
 
-                    // we just assume it worked and can update the istate 
+                    // we just assume it worked and can update the istate
                     pushd = _.clone(pushd);
                     if (putd.on !== undefined) {
                         pushd.on = putd.on;
@@ -476,7 +482,20 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
     var self = this;
 
     var account_value = "hue" + _.random.id(16);
+    var device_key = "/bridges/HueLightBridge/" + native.uuid + "/device";
     var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
+
+    var msgd;
+    if (self.native.modelNumber === '929000226503') {
+        msgd = {
+            devicetype: "test user",
+            username: account_value
+        };
+    } else {
+        msgd = {
+            devicetype: "homestar#" + account_value
+        };
+    }
 
     var url = "http://" + native.host + ":" + native.port + "/api";
     unirest
@@ -485,10 +504,7 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
             'Accept': 'application/json'
         })
         .type('json')
-        .send({
-            devicetype: "test user",
-            username: account_value
-        })
+        .send(msgd)
         .end(function (result) {
             var template;
             var templated = {
@@ -498,12 +514,13 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
 
             var error = null;
             var success = null;
+            var body = result.body;
 
             if (!result.ok) {
                 template = path.join(__dirname, "templates", "error.html");
                 templated.error = result.text;
-            } else if (result.body && result.body.length && result.body[0].error) {
-                error = result.body[0].error;
+            } else if (body && body.length && body[0].error) {
+                error = body[0].error;
                 if (error && error.description) {
                     templated.error = error.description;
                 } else {
@@ -513,7 +530,16 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
             } else {
                 template = path.join(__dirname, "templates", "success.html");
 
-                iotdb.keystore().save(account_key, account_value);
+                var username = account_value;
+                if (body.length) {
+                    body = body[0];
+                }
+                if (body.success && body.success.username) {
+                    username = body.success.username;
+                }
+
+                iotdb.keystore().save(account_key, username);
+                iotdb.keystore().save(device_key, account_value);
             }
 
             response
@@ -553,7 +579,7 @@ HueLightBridge.prototype._find_devices_to_configure = function () {
     }
 
     var ds = [];
-    // 
+    //
     for (var di in _dd) {
         var d = _dd[di];
         ds.push(d);
