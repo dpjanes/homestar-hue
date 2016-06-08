@@ -486,10 +486,9 @@ HueLightBridge.prototype._pair_device = function (request, response, native) {
     var account_key = "/bridges/HueLightBridge/" + native.uuid + "/account";
 
     var msgd;
-    if (self.native.modelNumber === '929000226503') {
+    if (native.modelNumber === '929000226503') {
         msgd = {
-            devicetype: "test user",
-            username: account_value
+            devicetype: "test user"
         };
     } else {
         msgd = {
