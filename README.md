@@ -1,6 +1,5 @@
 # homestar-hue
-
-Connect and control Philips Hue with HomeStar and IOTDB.
+[IOTDB](https://github.com/dpjanes/node-iotdb) Bridge to connect and control Philips Hue Lights.
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 
@@ -19,17 +18,20 @@ Then
 
 # Quick Start
 
-Set all lights to red
+
+Installation:
 
 	$ npm install -g homestar ## with 'sudo' if error
 	$ homestar setup
 	$ homestar install homestar-hue
     $ homestar configure homestar-hue 
-	$ node
-	>>> iotdb = require('iotdb')
-	>>> iot = iotdb.iot()
-	>>> things = iot.connect("HueLight")
-	>>> things.set(":color", "red")
+
+Code to set all lights to red:
+
+    const iotdb = require("iotdb")
+    iotdb.use("homestar-hue");
+
+    iotdb.connect("HueLight").set(":color", "red");
 
 # Configuration
 
