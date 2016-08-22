@@ -3,28 +3,23 @@
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 
+# About
+
 See <a href="samples/">the samples</a> for details how to add to your project,
 particularly <code>model.js</code> for standalone
 and <code>iotdb.js</code> for HomeStar/IOTDB.
 
-# Installation
+# Installation and Configuration
 
-Install Home☆Star first. 
-See: https://github.com/dpjanes/iotdb-homestar#installation
+* [Read this first](https://github.com/dpjanes/node-iotdb/blob/master/docs/install.md)
+* [Read about installing Home☆Star](https://github.com/dpjanes/node-iotdb/blob/master/docs/homestar.md) 
 
-Then
+    $ npm install -g homestar    ## may require sudo
+    $ homestar setup
+    $ npm install homestar-hue
+    $ homestar configure homestar-hue
 
-    $ homestar install homestar-hue
-
-# Quick Start
-
-
-Installation:
-
-	$ npm install -g homestar ## with 'sudo' if error
-	$ homestar setup
-	$ homestar install homestar-hue
-    $ homestar configure homestar-hue 
+# Use
 
 Code to set all lights to red:
 
@@ -33,13 +28,8 @@ Code to set all lights to red:
 
     iotdb.connect("HueLight").set(":color", "red");
 
-# Configuration
-
-Run
-
-    $ homestar configure homestar-hue
-
-# HueLight
+# Models
+## HueLight
 
 Control Philips Hue lights:
 
