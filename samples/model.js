@@ -4,15 +4,12 @@
 
 "use strict";
 
-try {
-    var model = require('homestar-hue');
-} catch (x) {
-    var model = require('../index');
-}
+const iotdb = require("iotdb")
+const _ = iotdb._;
 
-var _ = model.iotdb._;
+const module = require('homestar-hie');
 
-var wrapper = model.wrap("HueLight");
+const wrapper = _.bridge.wrap("HueLight", module.bindings);
 wrapper.on('thing', function (model) {
     model.on("state", function (model) {
         console.log("+ state\n ", model.state("istate"));
