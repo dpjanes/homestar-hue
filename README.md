@@ -9,6 +9,8 @@ See <a href="samples/">the samples</a> for details how to add to your project,
 particularly <code>model.js</code> for standalone
 and <code>iotdb.js</code> for HomeStar/IOTDB.
 
+* [Read about Bridges](https://github.com/dpjanes/node-iotdb/blob/master/docs/bridges.md)
+
 # Installation and Configuration
 
 * [Read this first](https://github.com/dpjanes/node-iotdb/blob/master/docs/install.md)
