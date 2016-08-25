@@ -19,7 +19,6 @@ and <code>iotdb.js</code> for HomeStar/IOTDB.
 Then:
 
     $ npm install -g homestar    ## may require sudo
-    $ homestar setup
     $ npm install homestar-hue
     $ homestar configure homestar-hue
 
@@ -47,8 +46,8 @@ Functionality:
 
 ## HueLightModel
 
-* <code>on</code>: true or false.  <code>iot-attribute:on</code>
-* <code>color</code>: a hex color ("#FF0000").  <code>iot-attribute:color</code>
+* <code>on</code>: true or false.  <code>iot-purpose:on</code>
+* <code>color</code>: a hex color ("#FF0000").  <code>iot-purpose:color</code>
 
 e.g.
 
