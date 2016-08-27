@@ -31,8 +31,8 @@
       "@type": "iot:Attribute",
       "iot:actuator": true,
       "iot:purpose": "iot-purpose:on",
-      "iot:read": true,
-      "iot:sensor": true,
+      "iot:read": false,
+      "iot:sensor": false,
       "iot:type": "iot:type.boolean",
       "iot:write": true,
       "schema:name": "on"
@@ -43,8 +43,8 @@
       "iot:actuator": true,
       "iot:format": "iot:format.color",
       "iot:purpose": "iot-purpose:color",
-      "iot:read": true,
-      "iot:sensor": true,
+      "iot:read": false,
+      "iot:sensor": false,
       "iot:type": "iot:type.string",
       "iot:write": true,
       "schema:name": "color"
