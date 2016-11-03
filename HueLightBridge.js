@@ -69,10 +69,6 @@ var HueLightBridge = function (initd, native) {
 
 HueLightBridge.prototype = new iotdb.Bridge();
 
-HueLightBridge.prototype.name = function () {
-    return "HueLightBridge";
-};
-
 /* --- lifecycle --- */
 
 /**

@@ -30,8 +30,10 @@ echo "=================="
     update-package --increment-version --package "$PACKAGE" --homestar || exit 1
 
     tar cf - \
+        --exclude "xx*" \
+        --exclude "yy*" \
         README.md LICENSE homestar.json package.json \
-        models/*.js models/*.json \
+        models/*/*.js models/*/*.json \
         templates/*.html \
         HueLightBridge.js hue-colors.js index.js \
         |

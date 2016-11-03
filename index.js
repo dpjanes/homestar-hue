@@ -24,7 +24,7 @@
 
 exports.Bridge = require('./HueLightBridge').Bridge;
 exports.bindings = [
-    require('./models/HueLight').binding,
+    require('./models/hue-light').binding,
 ];
 
 exports.module_folder = __dirname;
